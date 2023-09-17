@@ -14,6 +14,9 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+//variable 
+let pending = true; 
+
 //routes
 app.post("/data", (req, res) => {
   const { url } = req.body;
@@ -25,7 +28,7 @@ app.post("/data", (req, res) => {
     enable_javascript: true,
     enable_browser_rendering: true,
     tag: "some-str",
-    pingback_url: "https://www.youtube.com/",
+    pingback_url: "https://dataforseoserver-production.up.railway.app/ping",
   });
   axios({
     method: "post",
@@ -50,12 +53,23 @@ app.post("/data", (req, res) => {
       console.log(error);
     });
 });
+
+
+app.get("/ping" , (req, res)=>{
+  pending = false
+})
+
+app.get("/check", ( req, res )=>{
+res.send(pending)
+})
+
+
 app.post("/FinalData", (req, res) => {
   const { id } = req.body;
   const post_array2 = [];
   post_array2.push({
     id: `${id}`,
-    limit: 10,
+    limit: 1,
   });
   axios({
     method: "post",
