@@ -25,7 +25,7 @@ app.post("/data", (req, res) => {
     enable_javascript: true,
     enable_browser_rendering: true,
     tag: "some-str",
-    pingback_url: "https://dataforseoserver-production.up.railway.app/ping",
+    pingback_url: "https://www.youtube.com/",
   });
   axios({
     method: "post",
@@ -35,7 +35,6 @@ app.post("/data", (req, res) => {
       password: `${process.env.PASSWORD}`,
     },
     data: post_array,
-
     headers: {
       "content-type": "application/json",
     },
@@ -43,36 +42,37 @@ app.post("/data", (req, res) => {
     .then(function(response) {
       var result = response["data"]["tasks"];
       // Result data
-
-      var id = result[0].id;
-
-      app.get("/ping", async (req, res) => {
-        const post_array2 = [];
-        post_array2.push({
-          id: `${id}`,
-          limit: 1,
-        });
-        axios({
-          method: "post",
-          url: "https://api.dataforseo.com/v3/on_page/pages",
-          auth: {
-            username: `${process.env.LOGIN}`,
-            password: `${process.env.PASSWORD}`,
-          },
-          data: post_array2,
-          headers: {
-            "content-type": "application/json",
-          },
-        })
-          .then(function(response) {
-            var result = response["data"]["tasks"];
-            console.log(result);
-            res.status(201).send(result);
-          })
-          .catch(function(error) {
-            console.log(error);
-          });
+      res.status(200).send({
+        result: result[0].id,
       });
+    })
+    .catch(function(error) {
+      console.log(error);
+    });
+});
+app.post("/FinalData", (req, res) => {
+  const { id } = req.body;
+  const post_array2 = [];
+  post_array2.push({
+    id: `${id}`,
+    limit: 10,
+  });
+  axios({
+    method: "post",
+    url: "https://api.dataforseo.com/v3/on_page/pages",
+    auth: {
+      username: `${process.env.LOGIN}`,
+      password: `${process.env.PASSWORD}`,
+    },
+    data: post_array2,
+    headers: {
+      "content-type": "application/json",
+    },
+  })
+    .then(function(response) {
+      var result = response["data"]["tasks"];
+      console.log(result);
+      res.status(201).send(result);
     })
     .catch(function(error) {
       console.log(error);
