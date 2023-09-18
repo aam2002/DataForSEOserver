@@ -27,8 +27,8 @@ app.post("/data", (req, res) => {
     load_resources: true,
     enable_javascript: true,
     enable_browser_rendering: true,
-    tag: "some-str", 
-   });
+    tag: "some-str",
+  });
   axios({
     method: "post",
     url: "https://api.dataforseo.com/v3/on_page/task_post",
@@ -45,7 +45,7 @@ app.post("/data", (req, res) => {
       var result = response["data"]["tasks"];
 
       // Result data
-
+      takeid = result[0].id;
       res.status(200).send({
         result: result[0].id,
       });
@@ -70,12 +70,11 @@ app.post("/check", (req, res) => {
   })
     .then(function(response) {
       var result = response["data"]["tasks"][0]["result"];
-      // Result data
-      // res.send(result);
-      console.log(result.length);
+      console.log(result);
       for (let i = 0; i < result.length; i++) {
-        if (id == result[i].id) {
+        if (id === result[i].id) {
           pending = false;
+          return res.send(pending);
         }
       }
       res.send(pending);
@@ -120,3 +119,4 @@ const PORT = process.env.PORT || 3030;
 app.listen(PORT, () => {
   console.log(`app is running on port ${PORT}`.blue);
 });
+
