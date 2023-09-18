@@ -12,43 +12,10 @@ const app = express();
 
 //middelwares
 app.use(cors());
+app.use(express.json());
 
 //variable
 let pending = true;
-let takeid = null;
-
-//check route
-app.post("/check", (req, res) => {
-  axios({
-    method: "get",
-    url: "https://api.dataforseo.com/v3/on_page/tasks_ready",
-    auth: {
-      username: `${process.env.LOGIN}`,
-      password: `${process.env.PASSWORD}`,
-    },
-    headers: {
-      "content-type": "application/json",
-    },
-  })
-    .then(function(response) {
-      var result = response["data"]["tasks"][0]["result"];
-      // Result data
-      // res.send(result);
-      console.log(result.length);
-      for (let i = 0; i < result.length; i++) {
-        if (takeid == result[i].id) {
-          pending = false;
-        }
-      }
-      res.send(pending);
-    })
-    .catch(function(error) {
-      console.log(error);
-    });
-});
-
-//middle ware
-app.use(express.json());
 
 // routes
 app.post("/data", (req, res) => {
@@ -77,6 +44,7 @@ app.post("/data", (req, res) => {
   })
     .then(function(response) {
       var result = response["data"]["tasks"];
+
       // Result data
       takeid = result[0].id;
       res.status(200).send({
@@ -88,6 +56,35 @@ app.post("/data", (req, res) => {
     });
 });
 
+app.post("/check", (req, res) => {
+  const { takeid } = req.body;
+  axios({
+    method: "get",
+    url: "https://api.dataforseo.com/v3/on_page/tasks_ready",
+    auth: {
+      username: `${process.env.LOGIN}`,
+      password: `${process.env.PASSWORD}`,
+    },
+    headers: {
+      "content-type": "application/json",
+    },
+  })
+    .then(function(response) {
+      var result = response["data"]["tasks"][0]["result"];
+      // Result data
+      // res.send(result);
+      console.log(result.length);
+      for (let i = 0; i < result.length; i++) {
+        if (takeid == result[i].id) {
+          pending = false;
+        }
+      }
+      res.send(pending);
+    })
+    .catch(function(error) {
+      console.log(error);
+    });
+});
 
 app.post("/FinalData", (req, res) => {
   const { id } = req.body;
