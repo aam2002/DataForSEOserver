@@ -11,19 +11,52 @@ dotenv.config();
 const app = express();
 
 //middelwares
-app.use(express.json());
 app.use(cors());
 
-//variable 
-let pending = true; 
+//variable
+let pending = true;
+let takeid = null;
 
-//routes
+//check route
+app.post("/check", (req, res) => {
+  axios({
+    method: "get",
+    url: "https://api.dataforseo.com/v3/on_page/tasks_ready",
+    auth: {
+      username: `${process.env.LOGIN}`,
+      password: `${process.env.PASSWORD}`,
+    },
+    headers: {
+      "content-type": "application/json",
+    },
+  })
+    .then(function(response) {
+      var result = response["data"]["tasks"][0]["result"];
+      // Result data
+      // res.send(result);
+      console.log(result.length);
+      for (let i = 0; i < result.length; i++) {
+        if (takeid == result[i].id) {
+          pending = false;
+        }
+      }
+      res.send(pending);
+    })
+    .catch(function(error) {
+      console.log(error);
+    });
+});
+
+//middle ware
+app.use(express.json());
+
+// routes
 app.post("/data", (req, res) => {
   const { url } = req.body;
   const post_array = [];
   post_array.push({
     target: `${url}`,
-    max_crawl_pages: 10,
+    max_crawl_pages: 1,
     load_resources: true,
     enable_javascript: true,
     enable_browser_rendering: true,
@@ -45,6 +78,7 @@ app.post("/data", (req, res) => {
     .then(function(response) {
       var result = response["data"]["tasks"];
       // Result data
+      takeid = result[0].id;
       res.status(200).send({
         result: result[0].id,
       });
@@ -53,15 +87,6 @@ app.post("/data", (req, res) => {
       console.log(error);
     });
 });
-
-
-app.get("/ping" , (req, res)=>{
-  pending = false
-})
-
-app.get("/check", ( req, res )=>{
-res.send(pending)
-})
 
 
 app.post("/FinalData", (req, res) => {
