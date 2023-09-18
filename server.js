@@ -45,7 +45,7 @@ app.post("/data", (req, res) => {
       var result = response["data"]["tasks"];
 
       // Result data
-      takeid = result[0].id;
+
       res.status(200).send({
         result: result[0].id,
       });
