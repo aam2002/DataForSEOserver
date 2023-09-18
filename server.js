@@ -27,9 +27,8 @@ app.post("/data", (req, res) => {
     load_resources: true,
     enable_javascript: true,
     enable_browser_rendering: true,
-    tag: "some-str",
-    pingback_url: "https://dataforseoserver-production.up.railway.app/ping",
-  });
+    tag: "some-str", 
+   });
   axios({
     method: "post",
     url: "https://api.dataforseo.com/v3/on_page/task_post",
@@ -57,7 +56,7 @@ app.post("/data", (req, res) => {
 });
 
 app.post("/check", (req, res) => {
-  const { takeid } = req.body;
+  const { id } = req.body;
   axios({
     method: "get",
     url: "https://api.dataforseo.com/v3/on_page/tasks_ready",
@@ -75,7 +74,7 @@ app.post("/check", (req, res) => {
       // res.send(result);
       console.log(result.length);
       for (let i = 0; i < result.length; i++) {
-        if (takeid == result[i].id) {
+        if (id == result[i].id) {
           pending = false;
         }
       }
